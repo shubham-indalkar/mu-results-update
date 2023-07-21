@@ -23,7 +23,7 @@ async def post_messages(messages):
         for message in messages:
             await bot.send_message(CHANNEL_ID, text=message)
             logger.info("Message sent to the Telegram channel successfully.")
-            time.sleep(1)  # Add a small delay between sending messages to avoid rate-limiting
+            time.sleep(35)  # Add a small delay between sending messages to avoid rate-limiting
     except Exception as e:
         logger.error(f"Failed to send message: {e}")
 
