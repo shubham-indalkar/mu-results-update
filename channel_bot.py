@@ -5,6 +5,7 @@ from urllib.request import urlopen
 import json
 import logging
 from telegram import Bot
+from webserver import keep_alive
 
 # Set up logging for debugging
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
@@ -102,5 +103,8 @@ async def main():
         time.sleep(30)
 
 if __name__ == "__main__":
+    # Call the keep_alive function to start the web server
+    keep_alive()
+    
     import asyncio
     asyncio.run(main())
