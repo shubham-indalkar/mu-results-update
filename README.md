@@ -52,6 +52,13 @@ To run this project, you will need to add the following environment variables to
 
 &nbsp; 3. The bot will give the unique ID of your channel.
 
+### Bot setup
+
+&nbsp; 1. Add the bot to your channel.
+
+&nbsp; 2. Give admin rights to the bot.
+
+
 ### Declare your keys in environment
 
 Running the bot in local will required creating an `.env` file with the following contents:
