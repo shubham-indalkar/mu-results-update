@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 from urllib.request import urlopen
 import json
 import logging
+import psycopg2
 from telegram import Bot
 from webserver import keep_alive
 
@@ -14,9 +15,16 @@ logger = logging.getLogger(__name__)
 # Telegram bot token and channel ID
 TOKEN = os.getenv("BOT_TOKEN")
 CHANNEL_ID = os.getenv("CHANNEL_ID")
+# Parse the DATABASE_URL from the environment variable
+DATABASE_URL = os.environ["DATABASE_URL"]
 
 # Create a single Bot instance to be reused
 bot = Bot(token=TOKEN)
+
+# Function to connect to the ElephantSQL database
+def get_database_connection():
+    conn = psycopg2.connect(DATABASE_URL)
+    return conn
 
 # Function to post list of messages on the Telegram channel
 async def post_messages(messages):
@@ -29,10 +37,13 @@ async def post_messages(messages):
         logger.error(f"Failed to send message: {e}")
 
 async def main():
-    url = "http://www.mumresults.in/"
+    # Connect to the ElephantSQL database
+    conn = get_database_connection()
+    
+    URL = "http://www.mumresults.in/"
     while True:
         try:
-            page = urlopen(url)
+            page = urlopen(URL)
             html = page.read().decode("utf-8")
             soup = BeautifulSoup(html, "html.parser")
 
@@ -43,12 +54,14 @@ async def main():
                 # Find all the rows (tr tags) within the table
                 rows = table.find_all("tr")
 
-                # Load the previous count of declared results from the file
-                try:
-                    with open("count.json", "r") as file:
-                        previous_count = json.load(file)["count"]
-                except (FileNotFoundError, json.JSONDecodeError):
-                    previous_count = 0
+                # Load the previous count of declared results from the database
+		try:
+		    with conn.cursor() as cursor:
+			cursor.execute("SELECT count FROM result_count;")
+			previous_count = cursor.fetchone()[0]
+		except psycopg2.Error as e:
+		    logger.error(f"Failed to fetch previous count from the database: {e}")
+		    previous_count = 0
 
                 # Get the current count of declared results
                 current_count = len(rows)
@@ -81,15 +94,23 @@ async def main():
                             for a_tag in a_tags:
                                 a_text = a_tag.get_text(strip=True)
                                 href_link = a_tag.get("href")
-                                message += f"{a_text}\n{url}{href_link}\n\n"
+                                message += f"{a_text}\n{URL}{href_link}\n\n"
                             messages.append(message)
 
                     # Post the messages on the Telegram channel (await it since it's an asynchronous function)
                     await post_messages(messages)
 
-                    # Update the count file with the current count
-                    with open("count.json", "w") as file:
-                        json.dump({"count": current_count}, file)
+                    # Update the count in the database with the current count
+		    try:
+			with conn.cursor() as cursor:
+			    cursor.execute("UPDATE result_count SET count = %s;", (current_count,))
+			conn.commit()
+		    except psycopg2.Error as e:
+			logger.error(f"Failed to update count in the database: {e}")
+			
+		    
+		    # Close the database connection
+		    conn.close()
 
             else:
                 # print("No new results.")
