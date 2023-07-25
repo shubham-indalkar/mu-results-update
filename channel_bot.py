@@ -28,7 +28,7 @@ def get_and_cache_count():
         with conn.cursor() as cursor:
             cursor.execute("SELECT count FROM result_count;")
             count = cursor.fetchone()[0]
-            logger.info("Count from database: ", count)
+            logger.info(f"Count from database: {count}")
             return count
     except psycopg2.Error as e:
         logger.error(f"Failed to fetch count from the database: {e}")
