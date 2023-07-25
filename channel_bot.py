@@ -1,5 +1,6 @@
 import time
 import os
+from dotenv import load_dotenv
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
 import json
@@ -10,6 +11,9 @@ from webserver import keep_alive
 # Set up logging for debugging
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Get variables from .env
+load_dotenv()
 
 # Telegram bot token and channel ID
 TOKEN = os.getenv("BOT_TOKEN")
