@@ -126,7 +126,7 @@ async def main():
             time.sleep(60)  # Wait for 1 minute before retrying
 
         # delay between checking for new results
-        time.sleep(30)
+        time.sleep(120)
 
 if __name__ == "__main__":
     # Call the keep_alive function to start the web server
