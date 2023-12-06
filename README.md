@@ -98,7 +98,7 @@ CHANNEL_ID=YOUR_CHANNEL_ID
 
 Join the Telegram channel [here](https://t.me/mu_result_updates) to receive the latest current year MU exam results as soon as they are announced.
 
-Please note that the bot's availability depends on the Mumbai University exam results website and the Telegram API. In case of any issues, you can check the logs or contact [me](https://t.me/shubham_indalkar) for assistance.
+Please note that the bot's availability depends on the Mumbai University exam results website and the Telegram API. In case of any issues, you can check the logs or contact [me](https://t.me/andrio_official) for assistance.
 
 **Note:** Make sure to keep the `count.json` file in the same directory as the bot script. It stores the count of declared results and ensures that only new results are posted.
 
